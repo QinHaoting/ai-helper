@@ -13,14 +13,28 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class AIHelperServiceFactory {
-    @Resource
+    @Resource(name = "chatModel")
     private ChatModel qwenChatModel;
+
+    @Resource(name = "summaryChatModel")
+    private ChatModel summaryChatModel;
 
     @Bean
     public AIHelperService aiHelperService() {
         return AiServices.builder(AIHelperService.class)
                 .chatModel(qwenChatModel)
-                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10)) // 会话记忆
+//                .chatMemory(memory)
+//                .chatMemoryProvider(memoryId -> MessageWindowChatMemory.withMaxMessages(10)) // 自带窗口会话记忆
+
+                // 会话记忆摘要
+                .chatMemoryProvider(memoryId ->
+                        MessageConversationSummaryMemory.builder()
+                        .id(memoryId)
+                        .summarizer(summaryChatModel)
+                        .summarizeEveryNMessages(15) // 15条消息总结摘要
+                        .keepRecentMessages(6)
+                        .maxWindowMessages(40)
+                        .build())
                 .build();
     }
 }

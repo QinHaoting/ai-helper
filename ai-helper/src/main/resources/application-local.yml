@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ai-helper
+langchain4j:
+  community:
+    dashscope:
+      chat-model:
+        api-key: sk-8ed216e03162445b9e14dc64ce46979f
