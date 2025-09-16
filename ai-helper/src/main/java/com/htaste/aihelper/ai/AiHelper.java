@@ -20,7 +20,6 @@ public class AiHelper {
     private ChatModel qwenChatModel;
 
     private static String SYSTEM_MESSAGE = """
-            
             """;
 
     // 简单对话
