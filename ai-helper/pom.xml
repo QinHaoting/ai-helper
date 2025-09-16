@@ -40,6 +40,12 @@
             <artifactId>langchain4j-community-dashscope-spring-boot-starter</artifactId>
             <version>1.1.0-beta7</version>
         </dependency>
+        <!--内置内存向量数据库-->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-easy-rag</artifactId>
+            <version>1.0.0-beta3</version>
+        </dependency>
         <!--AI Service-->
         <dependency>
             <groupId>dev.langchain4j</groupId>

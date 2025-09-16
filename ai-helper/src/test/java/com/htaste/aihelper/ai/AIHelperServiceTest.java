@@ -5,7 +5,6 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Haoting Qin
@@ -53,6 +52,13 @@ class AIHelperServiceTest {
         System.out.println("----------------");
         System.out.println("小红的故事" + result2);
         System.out.println("----------------");
+    }
+
+    @Test
+    void chatWithRAG() {
+        String userMessage = "怎么退款？给出相关的步骤";
+        String result = aiHelperService.chat(userMessage);
+        System.out.println(result);
     }
 
     @Test
