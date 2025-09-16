@@ -10,8 +10,8 @@ import dev.langchain4j.service.UserMessage;
  */
 public interface AIHelperService {
 
-//    @SystemMessage(fromResource = "static/system-promt.txt")
-//    String chat(String userMessage);
+    @SystemMessage(fromResource = "static/system-promt.txt")
+    String chat(String userMessage);
 
     @SystemMessage(fromResource = "static/system-promt.txt")
     String chatWithMemory(@MemoryId int memoryId, @UserMessage String message);
