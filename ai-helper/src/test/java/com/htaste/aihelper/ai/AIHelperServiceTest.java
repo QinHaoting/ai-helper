@@ -54,12 +54,6 @@ class AIHelperServiceTest {
         System.out.println("----------------");
     }
 
-    @Test
-    void chatWithRAG() {
-        String userMessage = "怎么退款？给出相关的步骤";
-        String result = aiHelperService.chat(userMessage);
-        System.out.println(result);
-    }
 
     @Test
     void chatWithMemory2() {
@@ -85,9 +79,6 @@ class AIHelperServiceTest {
         String result2 = aiHelperService.chatWithMemory("user-2", user2Message);
         System.out.println("[  AI  ]: " + result2);
 
-
-
-
         user1Message = "不需要亲子友好，2位成人。";
         System.out.println("[ User ]: " + user1Message);
         result1 = aiHelperService.chatWithMemory("user-1", user1Message);
@@ -112,14 +103,19 @@ class AIHelperServiceTest {
         System.out.println("--------------//------------------");
 
 
-
-
-
         // 小红
         user2Message = "根据计算结果，再加上2等于多少？";
         System.out.println("[ User ]: " + user2Message);
         result2 = aiHelperService.chatWithMemory("user-2", user2Message);
         System.out.println("[  AI  ]: " + result2);
 
+    }
+
+
+    @Test
+    void chatWithRAG() {
+        String userMessage = "怎么退款？给出相关的步骤";
+        String result = aiHelperService.chat(userMessage);
+        System.out.println(result);
     }
 }

@@ -1,8 +1,41 @@
+server:
+  port: 8080
 spring:
   application:
     name: ai-helper
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/chat_memory_db
 langchain4j:
   community:
     dashscope:
       chat-model:
         api-key: sk-8ed216e03162445b9e14dc64ce46979f
+      streaming-chat-model:
+        api-key: sk-8ed216e03162445b9e14dc64ce46979f
+  open-ai:
+    chat-model:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+      api-key: sk-8ed216e03162445b9e14dc64ce46979f
+      log-requests: true
+      log-responses: true
+
+# Swagger配置
+#springdoc:
+#  api-docs:
+#    enabled: true                 # 启用/禁用API文档的访问
+#    path: /v3/api-docs            # 设置API文档的访问路径
+#  swagger-ui:
+#    path: /swagger-ui.html        # 设置Swagger UI的访问路径
+#    disable-swagger-default-url: true
+#    display-request-duration: true # 显示请求持续时间
+#  packages-to-scan: com.htaste.aihelper.ai.controller # 指定要扫描的包
+
+# Knife4j配置
+#knife4j.swagger-ui.enabled=true
+#knife4j.swagger-ui.path=/doc.html
+#logging:
+#  level:
+
+#    root: debug

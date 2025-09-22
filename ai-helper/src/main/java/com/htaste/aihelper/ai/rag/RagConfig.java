@@ -2,6 +2,7 @@ package com.htaste.aihelper.ai.rag;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
+import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
 import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 @Configuration
 public class RagConfig {
-    @Resource
+    @Resource(name = "qwenEmbeddingModel")
     private EmbeddingModel qwenEmbeddingModel;
 
     @Resource
@@ -31,15 +32,15 @@ public class RagConfig {
     public ContentRetriever contentRetriever() {
         // ----- RAG -----
 //        InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-
-        // 1. 加载文档
-        List<Document> documents = FileSystemDocumentLoader.loadDocuments("src/main/resources/docs");
-        // 2. 切分文档，按段落切分，每个段落最大1000字符，可重叠200字符
+        // 1 索引
+        // 1.1 加载文档
+        List<Document> documents = FileSystemDocumentLoader.loadDocuments("src/main/resources/docs", new ApacheTikaDocumentParser());
+        // 1.2 切分文档，按段落切分，每个段落最大1000字符，可重叠200字符
         DocumentByParagraphSplitter paragraphSplitter = new DocumentByParagraphSplitter(1000, 200);
-        // 3. 自定义文档加载器，把向量数据存储到向量数据库中
+        // 1.3. 自定义文档加载器，把向量数据存储到向量数据库中
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
                 .documentSplitter(paragraphSplitter) // 文档切割
-                // 提高文档切片质量，为每个切片增加文档元信息
+                // 为了提高文档切片质量，对每个切片都增加文档元信息（文件名）
                 .textSegmentTransformer(textSegment -> TextSegment.from(
                         textSegment.metadata().getString("file_name") + "\n" + textSegment.text(),
                             textSegment.metadata()
@@ -47,10 +48,10 @@ public class RagConfig {
                 .embeddingModel(qwenEmbeddingModel) // EmbeddingModel
                 .embeddingStore(embeddingStore) // Embedding存储
                 .build();
-        // 加载文档
-        ingestor.ingest(documents);
-        // 4. 自定义内容检索器
-        ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
+        ingestor.ingest(documents); // 加载文档
+
+        // 2 检索
+        ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder() // 自定义内容检索器
                 .embeddingStore(embeddingStore)
                 .embeddingModel(qwenEmbeddingModel)
                 .maxResults(5) // 最多返回5条结果

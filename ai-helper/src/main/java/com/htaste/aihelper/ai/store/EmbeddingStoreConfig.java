@@ -1,4 +1,4 @@
-package com.htaste.aihelper.ai;
+package com.htaste.aihelper.ai.store;
 
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.EmbeddingStore;

@@ -7,6 +7,7 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class MessageConversationSummaryMemory implements ChatMemory {
         this.window = MessageWindowChatMemory.builder()
                 .id(builder.id != null ? builder.id : UUID.randomUUID().toString())
                 .maxMessages(builder.maxWindowMessages)
+                .chatMemoryStore(builder.chatMemoryStore)
                 .build();
     }
 
@@ -156,6 +158,7 @@ public class MessageConversationSummaryMemory implements ChatMemory {
         private int summarizeEveryNMessages = 10; // 默认每10条消息总结
         private int keepRecentMessages = 6;       // 总结后保留近因消息条数
         private int maxWindowMessages = 40;       // 窗口最大消息条数
+        private ChatMemoryStore chatMemoryStore;
 
         public Builder id(Object id) {
             this.id = id;
@@ -179,6 +182,11 @@ public class MessageConversationSummaryMemory implements ChatMemory {
 
         public Builder maxWindowMessages(int k) {
             this.maxWindowMessages = Math.max(1, k);
+            return this;
+        }
+
+        public Builder chatMemoryStore(ChatMemoryStore chatMemoryStore) {
+            this.chatMemoryStore = chatMemoryStore;
             return this;
         }
 
