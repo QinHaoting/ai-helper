@@ -1,20 +1,19 @@
 package com.htaste.aihelper.ai.rag;
 
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.loader.FileSystemDocumentLoader;
-import dev.langchain4j.data.document.parser.apache.tika.ApacheTikaDocumentParser;
-import dev.langchain4j.data.document.splitter.DocumentByParagraphSplitter;
+import com.htaste.aihelper.ai.rag.QueryTransform.SmartQueryTransformer;
 import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.rag.DefaultRetrievalAugmentor;
+import dev.langchain4j.rag.RetrievalAugmentor;
+import dev.langchain4j.rag.content.aggregator.DefaultContentAggregator;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
+import dev.langchain4j.rag.query.transformer.QueryTransformer;
 import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.EmbeddingStoreIngestor;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 /**
  * @author Haoting Qin
@@ -23,39 +22,78 @@ import java.util.List;
 @Configuration
 public class RagConfig {
     @Resource(name = "qwenEmbeddingModel")
-    private EmbeddingModel qwenEmbeddingModel;
+    private EmbeddingModel embeddingModel;
 
     @Resource
     private EmbeddingStore<TextSegment> embeddingStore;
 
+    @Resource(name = "queryTransformModel")
+    private ChatModel queryTransformModel;
+
+
+    /**
+     * 多语句查询扩展个数，默认为3
+     */
+    private final int ExpandQueryNumber = 3;
+
+    /**
+     * 内容检索结果返回个数，默认为5
+    */
+    private int ContentRetrieveNumber = 5;
+
+
+    /**
+     * 查询重写器
+     * @return
+     */
+    @Bean
+    public QueryTransformer queryTransformer() {
+//        // 1. Query重写
+//        LlmQueryRewriter queryRewriter = new LlmQueryRewriter(queryTransformModel);
+//
+//        // 2. 多语句扩展
+//        ExpandingQueryTransformer expander =
+//                ExpandingQueryTransformer.builder()
+//                        .chatModel(queryTransformModel)
+//                        .n(ExpandQueryNumber)   // 默认扩展语句的个数
+//                        .build();
+//
+//        // 3. 组合成一个复合 transformer
+//        CompositeQueryTransformer compositeTransformer =
+//                new CompositeQueryTransformer(List.of(queryRewriter, expander));
+//        return compositeTransformer;
+
+        return new SmartQueryTransformer(queryTransformModel, ExpandQueryNumber);
+    }
+
+    /**
+     * 查询增强器
+     * @return
+     */
+    @Bean
+    public RetrievalAugmentor retrievalAugmentor(
+            QueryTransformer queryTransformer,
+            ContentRetriever contentRetriever
+    ) {
+        return DefaultRetrievalAugmentor.builder()
+                .queryTransformer(queryTransformer)
+                .contentRetriever(contentRetriever)
+                .contentAggregator(new DefaultContentAggregator())
+//                .contentAggregator(new ReRankingContentAggregator()) // TODO 重排模型
+                .build();
+    }
+
+    /**
+     * 内容检索器
+     * @return
+     */
     @Bean
     public ContentRetriever contentRetriever() {
-        // ----- RAG -----
-//        InMemoryEmbeddingStore<TextSegment> embeddingStore = new InMemoryEmbeddingStore<>();
-        // 1 索引
-        // 1.1 加载文档
-        List<Document> documents = FileSystemDocumentLoader.loadDocuments("src/main/resources/docs", new ApacheTikaDocumentParser());
-        // 1.2 切分文档，按段落切分，每个段落最大1000字符，可重叠200字符
-        DocumentByParagraphSplitter paragraphSplitter = new DocumentByParagraphSplitter(1000, 200);
-        // 1.3. 自定义文档加载器，把向量数据存储到向量数据库中
-        EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
-                .documentSplitter(paragraphSplitter) // 文档切割
-                // 为了提高文档切片质量，对每个切片都增加文档元信息（文件名）
-                .textSegmentTransformer(textSegment -> TextSegment.from(
-                        textSegment.metadata().getString("file_name") + "\n" + textSegment.text(),
-                            textSegment.metadata()
-                ))
-                .embeddingModel(qwenEmbeddingModel) // EmbeddingModel
-                .embeddingStore(embeddingStore) // Embedding存储
-                .build();
-        ingestor.ingest(documents); // 加载文档
-
-        // 2 检索
         ContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder() // 自定义内容检索器
                 .embeddingStore(embeddingStore)
-                .embeddingModel(qwenEmbeddingModel)
-                .maxResults(5) // 最多返回5条结果
-                .minScore(0.75) // 最低相似度分数
+                .embeddingModel(embeddingModel)
+                .maxResults(ContentRetrieveNumber) // 最多返回5条结果
+//                .minScore(0.75) // 最低相似度分数
                 .build();
         return contentRetriever;
     }

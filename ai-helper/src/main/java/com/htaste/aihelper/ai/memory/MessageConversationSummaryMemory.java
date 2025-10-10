@@ -1,4 +1,4 @@
-package com.htaste.aihelper.ai;
+package com.htaste.aihelper.ai.memory;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;

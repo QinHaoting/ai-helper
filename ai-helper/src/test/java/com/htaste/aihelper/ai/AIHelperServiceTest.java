@@ -1,6 +1,6 @@
 package com.htaste.aihelper.ai;
 
-import dev.langchain4j.data.message.UserMessage;
+import com.htaste.aihelper.AiHelperApplication;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Haoting Qin
  * @date 2025/9/11
  */
-@SpringBootTest
+@SpringBootTest(classes = AiHelperApplication.class)
 class AIHelperServiceTest {
 
     @Resource

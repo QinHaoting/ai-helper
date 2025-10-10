@@ -6,7 +6,6 @@ import dev.langchain4j.community.model.dashscope.QwenStreamingChatModel;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +36,22 @@ public class LangChainConfig {
                 .build();
     }
 
+    /**
+     * RAG的Query重写模型
+     * @return
+     */
+    @Bean(name = "queryTransformModel")
+    public ChatModel queryTransformModel() {
+        return QwenChatModel.builder()
+                .apiKey(qwen_api_key)
+                .modelName("qwen-turbo")
+                .build();
+    }
+
+    /**
+     * 流式输出
+     * @return
+     */
     @Bean(name = "streamingChatModel")
     @Primary // 将这个Bean标记为ChatLanguageModel类型的主要/默认Bean
     public StreamingChatModel streamingChatModel() {
