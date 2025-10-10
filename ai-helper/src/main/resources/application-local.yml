@@ -8,6 +8,7 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/chat_memory_db
 langchain4j:
+
   community:
     dashscope:
       chat-model:
@@ -20,6 +21,13 @@ langchain4j:
       api-key: sk-8ed216e03162445b9e14dc64ce46979f
       log-requests: true
       log-responses: true
+
+embedding-store:
+  pinecone:
+    index-name: ai-helper
+    cloud: AWS
+    region: us-east-1
+    api-key: pcsk_473ywq_9PR4JS13Vs8qdE4No7AKf4nYzv9EMynHkCPLuRcPJvtZMERaAqrJTfHTRsdrLXi
 
 # Swagger配置
 #springdoc:

@@ -45,19 +45,26 @@
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
             <version>4.5.0</version>
         </dependency>
-        <!--LangChain4j qwen Model-->
+        <!--LLM-->
+            <!--LangChain4j qwen Model-->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-community-dashscope-spring-boot-starter</artifactId>
             <version>1.1.0-beta7</version>
         </dependency>
-        <!--LangChain4j Deepseek Model-->
+            <!--LangChain4j Deepseek Model-->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai-spring-boot-starter</artifactId>
             <version>1.1.0-beta7</version>
         </dependency>
         <!--TODO 内置内存向量数据库-->
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-pinecone</artifactId>
+            <version>1.7.1-beta14</version>
+        </dependency>
+
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-easy-rag</artifactId>
@@ -69,6 +76,7 @@
             <artifactId>langchain4j</artifactId>
             <version>1.2.0</version>
         </dependency>
+
         <!--对话记忆持久化-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
